@@ -1,120 +1,105 @@
-#include "shell.h"
+#include "main.h"
+
 /**
- * main - initialize the variables of the program
- * @argc: number of values received from the command line
- * @argv: values received from the command line
- * @env: number of values received from the command line
- * Return: zero on succes.
+ * main - main program for the simple shell
+ * @void: This function takes no argument
+ *
+ * Return: 1 if successful, 0 if not
  */
-int main(int argc, char *argv[], char *env[])
+int main(void)
 {
-	data_of_program data_struct = {NULL}, *data = &data_struct;
-	char *prompt = "";
+	int flag = 0;
+	char *usr_input = NULL;
+	char **args; 
+	size_t length = 0;
+	int status;
+	int count;
 
-	inicialize_data(data, argc, argv, env);
+	while (flag == 0)
+	{
+		printf(PROMPT);
+		getline(&usr_input, &length, stdin);
 
-	signal(SIGINT, handle_ctrl_c);
+		args = tokenize_string(usr_input, " \n");
 
-	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO) && argc == 1)
-	{/* We are in the terminal, interactive mode */
-		errno = 2;/*???????*/
-		prompt = PROMPT_MSG;
+		execute_command(args[0], args, environ);
+
+		for (count = 0; args[count] != NULL; count++)
+			free(args[count]);
+		free(args);
+
+		wait(&status);
 	}
-	errno = 0;
-	sisifo(prompt, data);
+
+	free(usr_input);
 	return (0);
 }
 
 /**
- * handle_ctrl_c - print the prompt in a new line
- * when the signal SIGINT (ctrl + c) is send to the program
- * @UNUSED: option of the prototype
+ * execute_command - executes the command passed
+ * @command: command to be executed
+ * @args: The array of the arguments
+ * @environ: The environmental variables
+ *
+ * Return: 0 if successful, 1 if not.
  */
-void handle_ctrl_c(int opr UNUSED)
+int execute_command(char *command, char **args, char** environ)
 {
-	_print("\n");
-	_print(PROMPT_MSG);
+	pid_t child_pid;
+
+	child_pid = fork();
+	if (child_pid == -1)
+	{
+		perror("Error");
+		return (1);
+	}
+	else if (child_pid == 0)
+	{
+		execve(command, args, environ);
+		perror("Error");
+		return (1);
+	}
+
+	return (0);
 }
 
 /**
- * inicialize_data - inicialize the struct with the info of the program
- * @data: pointer to the structure of data
- * @argv: array of arguments pased to the program execution
- * @env: environ pased to the program execution
- * @argc: number of values received from the command line
+ * tokenize_string: tokenizes a string and store them in
+ * a null terminated array.
+ * @str: The string to be tokenized.
+ * @delimeter: The delimeter to be used.
+ *
+ * Return: A string array containing the tokenized string.
  */
-void inicialize_data(data_of_program *data, int argc, char *argv[], char **env)
+char **tokenize_string(char *str, char *delimeter)
 {
-	int i = 0;
+	char **tokens = NULL;
+	char *token;
+	unsigned int count = 0;
+	char *strcopy = strdup(str);
 
-	data->program_name = argv[0];
-	data->input_line = NULL;
-	data->command_name = NULL;
-	data->exec_counter = 0;
-	/* define the file descriptor to be readed*/
-	if (argc == 1)
-		data->file_descriptor = STDIN_FILENO;
-	else
-	{
-		data->file_descriptor = open(argv[1], O_RDONLY);
-		if (data->file_descriptor == -1)
-		{
-			_printe(data->program_name);
-			_printe(": 0: Can't open ");
-			_printe(argv[1]);
-			_printe("\n");
-			exit(127);
-		}
-	}
-	data->tokens = NULL;
-	data->env = malloc(sizeof(char *) * 50);
-	if (env)
-	{
-		for (; env[i]; i++)
-		{
-			data->env[i] = str_duplicate(env[i]);
-		}
-	}
-	data->env[i] = NULL;
-	env = data->env;
+	token = strtok(strcopy, delimeter);
 
-	data->alias_list = malloc(sizeof(char *) * 20);
-	for (i = 0; i < 20; i++)
+	while (token != NULL)
 	{
-		data->alias_list[i] = NULL;
+		count++;
+		token = strtok(NULL, delimeter);
 	}
-}
-/**
- * sisifo - its a infinite loop that shows the prompt
- * @prompt: prompt to be printed
- * @data: its a infinite loop that shows the prompt
- */
-void sisifo(char *prompt, data_of_program *data)
-{
-	int error_code = 0, string_len = 0;
-
-	while (++(data->exec_counter))
+	
+	tokens = malloc((sizeof(char *) * count) + 1);
+	
+	strcopy = strdup(str);
+	token = strtok(strcopy, delimeter);
+	count = 0;
+	while (token != NULL)
 	{
-		_print(prompt);
-		error_code = string_len = _getline(data);
-
-		if (error_code == EOF)
-		{
-			free_all_data(data);
-			exit(errno); /* if EOF is the fisrt Char of string, exit*/
-		}
-		if (string_len >= 1)
-		{
-			expand_alias(data);
-			expand_variables(data);
-			tokenize(data);
-			if (data->tokens[0])
-			{ /* if a text is given to prompt, execute */
-				error_code = execute(data);
-				if (error_code != 0)
-					_print_error(error_code, data);
-			}
-			free_recurrent_data(data);
-		}
+		tokens[count] = malloc(sizeof(token));
+		tokens[count] = strdup(token);
+		count++;
+		token = strtok(NULL, delimeter);
 	}
+
+	tokens[count] = NULL;
+
+	return (tokens);
 }
