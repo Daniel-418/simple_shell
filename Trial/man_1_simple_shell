@@ -1,0 +1,29 @@
+TH man 1 "22 - Feb 23" "0.1" "simple_shell man page"
+
+.SH NAME
+simple_shell - A simple shell program in C for interacting with a Linux operating system.
+
+.SH SYNOPSIS
+hsh [options] [file]
+
+.SH DESCRIPTION
+The term "shell" refers to the user interface with an operating system that interprets and executes user commands. The simple_shell program reads and interprets commands from a file or the terminal, and executes them. It is typically launched automatically when a user logs in to the system. Simple_shell supports both interactive and non-interactive use, such as shell scripts. The program will search for executables in all directories listed in the PATH environment variable. The return value for successful execution is always 0.
+
+.SH OVERVIEW
+The simple_shell program is a command that reads lines from either a file or the terminal, interprets them, and generally executes other commands. It incorporates many features to aid interactive use, and its interpretive language is common to both interactive and non-interactive use. Commands can be typed directly into the running simple_shell or can be placed in a file and executed directly by the program.
+
+.SH RETURN VALUE
+The return value for successful execution is always 0. A non-zero value indicates a failure.
+
+.SH OPTIONS
+Command options can be entered after the main command followed by a space and a '-' symbol.
+
+.SH EXAMPLE
+For example, to list files and directories with additional information, the command would be:
+$ ls -l
+
+.SH BUGS
+A single space is required after each argument.
+
+.SH AUTHOR
+The simple_shell program was created by Daniel and Ahmed.
