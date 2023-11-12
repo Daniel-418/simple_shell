@@ -36,6 +36,7 @@ int add_element(list_t **list, char *element);
 ssize_t get_size(list_t *list);
 list_t *get_node(list_t *list, int index);
 int free_list(list_t *list);
+int free_str_array(char **arr);
 
 /* string utility functions */
 char *_strdup(char *str);

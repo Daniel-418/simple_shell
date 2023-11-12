@@ -24,14 +24,22 @@ int main(int argc, char *argv[])
 	control = 0;
 	while ((control = getline(&buffer, &size, stdin)) != -1)
 	{
+		if (control <= 1)
+		{
+			display_prompt(prompt);
+			continue;
+		}
 		buffer[control - 1] = '\0';
 		command_args = split_string(buffer, " ");
 
 		execute_command(command_args[0], command_args, environ, argv[0]);
+
+		free_str_array(command_args);
 		display_prompt(prompt);
 	}
 
 	free(buffer);
+
 	return (0);
 }
 
@@ -106,7 +114,7 @@ char **split_string(char *str, char *delimeter)
 
 	size = get_size(string_list);
 
-	string_array = malloc(sizeof(char *) * size);
+	string_array = malloc(sizeof(char *) * (size + 1));
 	if (string_array == NULL)
 		return (NULL);
 
@@ -114,6 +122,25 @@ char **split_string(char *str, char *delimeter)
 	{
 		string_array[i] = _strdup(get_node(string_list, i)->str);
 	}
+	string_array[size] = NULL;
+
 	free_list(string_list);
 	return (string_array);
+}
+
+/**
+ * free_str_array - frees an array of strings
+ * @arr: the array
+ *
+ * Return: 0
+ */
+int free_str_array(char **arr)
+{
+	int i;
+
+	for (i = 0; arr[i] != NULL; i++)
+		free(arr[i]);
+	free(arr);
+
+	return (0);
 }
