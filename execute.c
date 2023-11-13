@@ -7,39 +7,14 @@
  *
  * Return: Always 0.
  */
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	char *prompt;
-	char *buffer;
-	size_t size;
-	ssize_t control;
-	char **command_args;
+
+	prompt = "$: ";
 
 	argc = argc;
-	prompt = "#cisfun$ ";
-	size = 0;
-	buffer = NULL;
-
-	display_prompt(prompt);
-	control = 0;
-	while ((control = getline(&buffer, &size, stdin)) != -1)
-	{
-		if (control <= 1)
-		{
-			display_prompt(prompt);
-			continue;
-		}
-		buffer[control - 1] = '\0';
-		command_args = split_string(buffer, " ");
-
-		execute_command(command_args[0], command_args, environ, argv[0]);
-
-		free_str_array(command_args);
-		display_prompt(prompt);
-	}
-
-	free(buffer);
-
+	shell_loop(argv[0], prompt);
 	return (0);
 }
 

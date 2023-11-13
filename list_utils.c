@@ -110,3 +110,29 @@ list_t *get_node(list_t *list, int index)
 
 	return (current_node);
 }
+
+/**
+ * print_list - prints a list
+ * @list: the list to be printed
+ *
+ * Return: 0 if successful, -1 if not
+ */
+int print_list(list_t *list)
+{
+	list_t *temp;
+
+	if (list == NULL)
+		return (-1);
+	temp = list;
+
+	while (temp != NULL)
+	{
+		if (write(STDOUT_FILENO, temp->str, temp->len) == -1)
+			return (-1);
+		if (write(STDOUT_FILENO, "\n", 1) == -1)
+			return (-1);
+		temp = temp->next;
+	}
+
+	return (0);
+}
