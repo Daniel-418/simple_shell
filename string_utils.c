@@ -52,18 +52,20 @@ char *_strdup(char *str)
  * @str1: First string for comparison.
  * @str2: Second string for comparison.
  *
- * Return: An integer less than, equal to, or greater than zero if str1 is found,
- * respectively, to be less than, to match, or be greater than str2.
+ * Return: An integer less than, equal to,
+ * or greater than zero if str1 is found,
+ * respectively, to be less than, to match,
+ * or be greater than str2.
  */
 int _strcmp(char *str1, char *str2)
 {
-    while (*str1 && (*str1 == *str2))
-    {
-        str1++;
-        str2++;
-    }
+	while (*str1 && (*str1 == *str2))
+	{
+		str1++;
+		str2++;
+	}
 
-    return (int)(*str1 - *str2);
+	return ((int)(*str1 - *str2));
 }
 
 /**

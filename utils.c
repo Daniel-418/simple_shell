@@ -3,6 +3,7 @@
 /**
  * shell_loop - entry point for shell
  * @program_name: Name of the program for errors
+ * @prompt: the prompt for the shell
  *
  * Return: void
  */
@@ -60,28 +61,25 @@ char *get_command_path(char *command)
 	int i;
 
 	if (stat(command, &st) == 0)
-			return (_strdup(command));
-	else
+		return (_strdup(command));
+
+	path_dirs = getenvdirs("PATH");
+
+	for (i = 0; i < get_size(path_dirs); i++)
 	{
-		path_dirs = getenvdirs("PATH");
+		fullpathslash = _strcat(get_node(path_dirs, i)->str, "/");
+		fullpath = _strcat(fullpathslash, command);
+		free(fullpathslash);
 
-		for (i = 0; i < get_size(path_dirs); i++)
+		if (stat(fullpath, &st) == 0)
 		{
-			fullpathslash = _strcat(get_node(path_dirs, i)->str, "/");
-			fullpath = _strcat(fullpathslash, command);
-			free(fullpathslash);
-
-			if (stat(fullpath, &st) == 0)
-			{
-				free_list(path_dirs);
-				return (fullpath);
-			}
-
-			free(fullpath);
+			free_list(path_dirs);
+			return (fullpath);
 		}
 
-		free_list(path_dirs);
-		return(NULL);
-
+		free(fullpath);
 	}
+
+	free_list(path_dirs);
+	return (NULL);
 }

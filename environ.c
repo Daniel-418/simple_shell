@@ -19,7 +19,7 @@ char *_getenv(char *var)
 		env_copy = strdup(environ[i]);
 		if (env_copy == NULL)
 			return (NULL);
-		
+
 		env_var = strtok(env_copy, "=");
 
 		if (env_var != NULL && _strcmp(env_var, var) == 0)
@@ -27,7 +27,7 @@ char *_getenv(char *var)
 			value = strtok(NULL, "=");
 			duplicated_value = strdup(value);
 			free(env_copy);
-			return duplicated_value;
+			return (duplicated_value);
 		}
 
 		free(env_copy);
