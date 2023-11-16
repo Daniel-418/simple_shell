@@ -34,7 +34,9 @@ char **split_string(char *str, char *delimeter);
 char *_getenv(char *var);
 void shell_loop(char *program_name, char *prompt);
 list_t *getenvdirs(char *var);
-char *get_command_path(char *command); 
+char *get_command_path(char *command);
+ssize_t _getline(char **lineptr, size_t *n, int fd);
+
 
 
 /* lists utility functions */

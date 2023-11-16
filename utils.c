@@ -21,7 +21,7 @@ void shell_loop(char *program_name, char *prompt)
 	display_prompt(prompt);
 	control = 0;
 
-	while ((control = getline(&buffer, &size, stdin)) != -1)
+	while ((control = _getline(&buffer, &size, STDIN_FILENO)) != -1)
 	{
 		if (control <= 1)
 		{
