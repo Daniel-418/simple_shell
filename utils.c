@@ -32,8 +32,6 @@ void shell_loop(char *program_name, char *prompt)
 		command_args = split_string(buffer, " ");
 		command = get_command_path(command_args[0]);
 
-		if (command == NULL)
-			fprintf(stderr, "%s, command not found\n", command_args[0]);
 		else
 		{
 			execute_command(command, command_args, environ, program_name);
